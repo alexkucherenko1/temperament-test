@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Тест на темперамент</title>
+<style>
+  :root{
+    --bg:#f4f1ea; --card:#fffdf8; --ink:#2b2b28; --muted:#8a8578;
+    --line:#e3ddd0; --acc:#3a5a40;
+    --chol:#a53a2f; --sang:#c98a1a; --phleg:#3a5a40; --melan:#3b5a7a;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:Georgia,'Times New Roman',serif;background:var(--bg);color:var(--ink);
+    line-height:1.5;padding:28px 16px;max-width:780px;margin:0 auto}
+  h1{font-size:26px;font-weight:normal;letter-spacing:.5px;margin-bottom:4px}
+  .sub{color:var(--muted);font-size:14px;margin-bottom:20px}
+  .progress{position:sticky;top:0;background:var(--bg);padding:10px 0 14px;z-index:5}
+  .bar{height:6px;background:var(--line);border-radius:3px;overflow:hidden}
+  .fill{height:100%;width:0;background:var(--acc);transition:width .3s}
+  .pcount{font-size:13px;color:var(--muted);margin-top:6px}
+  .block-title{font-size:20px;font-weight:normal;margin:28px 0 6px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+  .block-desc{font-size:13px;color:var(--muted);margin-bottom:14px;font-style:italic}
+  .q{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin-bottom:12px}
+  .qtext{font-size:16px;margin-bottom:12px}
+  .qnum{color:var(--muted);font-size:13px;margin-right:6px}
+  .opts{display:flex;gap:8px;flex-wrap:wrap}
+  .opt{flex:1;min-width:64px;text-align:center;padding:9px 4px;border:1px solid var(--line);
+    border-radius:8px;cursor:pointer;font-size:13px;background:#fff;transition:.15s;user-select:none}
+  .opt:hover{border-color:var(--acc)}
+  .opt.sel{background:var(--acc);color:#fff;border-color:var(--acc)}
+  .btn{display:block;width:100%;padding:14px;margin:12px 0;font-family:inherit;font-size:16px;
+    background:var(--ink);color:var(--bg);border:none;border-radius:10px;cursor:pointer}
+  .btn:disabled{opacity:.4;cursor:not-allowed}
+  .btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+  .warn{color:var(--chol);font-size:13px;text-align:center;margin-top:8px;display:none}
+  .result{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:24px;margin-top:8px;display:none}
+  .result h2{font-weight:normal;font-size:23px;margin-bottom:4px}
+  .dom{font-size:15px;color:var(--muted);margin-bottom:22px}
+  .sect{font-size:17px;margin:22px 0 12px;padding-top:16px;border-top:1px solid var(--line)}
+  .row{margin-bottom:14px}
+  .rlabel{display:flex;justify-content:space-between;font-size:15px;margin-bottom:5px}
+  .rbar{height:22px;background:var(--line);border-radius:6px;overflow:hidden}
+  .rfill{height:100%;width:0;transition:width .8s ease;border-radius:6px}
+  .desc{font-size:14px;color:var(--muted);margin-top:14px}
+  .grid{position:relative;width:100%;max-width:420px;margin:10px auto;aspect-ratio:1;border:1px solid var(--line);border-radius:8px;background:var(--card)}
+  .grid .axis{position:absolute;background:var(--line)}
+  .grid .ax-h{left:0;right:0;top:50%;height:1px}
+  .grid .ax-v{top:0;bottom:0;left:50%;width:1px}
+  .grid .lab{position:absolute;font-size:11px;color:var(--muted)}
+  .grid .l-top{top:4px;left:50%;transform:translateX(-50%)}
+  .grid .l-bot{bottom:4px;left:50%;transform:translateX(-50%)}
+  .grid .l-left{left:4px;top:50%;transform:translateY(-50%)}
+  .grid .l-right{right:4px;top:50%;transform:translateY(-50%)}
+  .grid .quad{position:absolute;font-size:11px;color:var(--muted);opacity:.6}
+  .q1{top:10px;left:10px}.q2{top:10px;right:10px}.q3{bottom:10px;left:10px}.q4{bottom:10px;right:10px}
+  .dot{position:absolute;width:16px;height:16px;background:var(--chol);border:2px solid #fff;border-radius:50%;
+    transform:translate(-50%,-50%);box-shadow:0 1px 4px rgba(0,0,0,.3);transition:all .8s ease}
+  .coord{text-align:center;font-size:13px;color:var(--muted);margin-top:6px}
+  .disclaim{font-size:12px;color:var(--muted);margin-top:20px;padding-top:14px;border-top:1px solid var(--line);font-style:italic}
+  .copied{text-align:center;font-size:13px;color:var(--acc);margin-top:4px;display:none}
+</style>
+</head>
+<body>
+<h1>Тест на темперамент</h1>
+<p class="sub">70 утверждений в трёх блоках. Ответы никуда не отправляются — результат виден только вам, на этом устройстве.</p>
+
+<noscript><p style="color:#a53a2f;font-size:14px;padding:12px;border:1px solid #a53a2f;border-radius:8px">Для работы теста нужен браузер с включённым JavaScript. Откройте файл в Safari или Chrome (кнопка «Поделиться» → «Открыть в браузере»).</p></noscript>
+
+<div class="progress">
+  <div class="bar"><div class="fill" id="fill"></div></div>
+  <div class="pcount" id="pcount">0 из 0</div>
+</div>
+
+<div id="quiz"></div>
+
+<button class="btn" id="calc" disabled>Показать результат</button>
+<p class="warn" id="warn">Ответьте на все вопросы для точного результата.</p>
+
+<div class="result" id="result"></div>
+
+<script>
+const SCALE=["Нет","Скорее нет","Скорее да","Да"];
+const TYPES={
+  chol:{name:"Холерик",color:"var(--chol)"},
+  sang:{name:"Сангвиник",color:"var(--sang)"},
+  phleg:{name:"Флегматик",color:"var(--phleg)"},
+  melan:{name:"Меланхолик",color:"var(--melan)"}
+};
+const DESC={
+  chol:"Энергичный, быстрый, инициативный. Вспыльчив, нетерпелив, любит вызовы и лидерство. Сильный, но неуравновешенный тип НС.",
+  sang:"Общительный, гибкий, оптимистичный. Легко переключается, эмоции неглубокие. Сильный, уравновешенный, подвижный тип.",
+  phleg:"Спокойный, стабильный, надёжный. Медленно раскачивается, но доводит до конца. Сильный, уравновешенный, инертный тип.",
+  melan:"Чувствительный, глубокий, рефлексивный. Тонко реагирует, быстро устаёт, тревожен. Слабый тип НС, высокая эмпатия."
+};
+
+const B1=[
+  ["chol","Быстро вспыхиваю и реагирую резко, потом отхожу."],
+  ["sang","Легко схожусь с новыми людьми."],
+  ["phleg","Меня трудно вывести из равновесия."],
+  ["melan","Долго прокручиваю в голове неприятные ситуации."],
+  ["chol","Люблю спорить и продавливать свою позицию."],
+  ["sang","Быстро переключаюсь между делами и настроениями."],
+  ["phleg","Довожу начатое до конца, редко бросаю."],
+  ["melan","Чувствителен к критике."],
+  ["chol","Меня раздражает медлительность окружающих."],
+  ["sang","Я оптимист, редко унываю надолго."],
+  ["phleg","Не люблю резких перемен, ценю стабильность."],
+  ["melan","Быстро устаю от шума и большого количества людей."],
+  ["chol","Легко берусь за рискованное и новое."],
+  ["sang","Рутина быстро надоедает, нужно разнообразие."],
+  ["phleg","Принимаю решения медленно, но взвешенно."],
+  ["melan","Склонен к самоанализу и рефлексии."],
+  ["chol","Прямолинеен, говорю что думаю, даже резко."],
+  ["sang","Живо реагирую, но эмоции быстро проходят."],
+  ["phleg","Сдержан, редко показываю эмоции."],
+  ["melan","Тревожусь о том, что может пойти не так."],
+  ["chol","В конфликте иду напролом, а не отступаю."],
+  ["sang","Люблю быть в центре компании."],
+  ["phleg","Терпелив, могу долго заниматься монотонным делом."],
+  ["melan","Тяжело переживаю неудачи."],
+  ["chol","Мне сложно долго ждать и бездействовать."],
+  ["sang","Легко завожу разговор с незнакомцами."],
+  ["phleg","Держу привычный распорядок дня."],
+  ["melan","Замечаю мелочи и настроение других людей."],
+  ["chol","Импульсивен в решениях."],
+  ["sang","Настроение меняется легко и часто."],
+  ["phleg","В стрессе остаюсь хладнокровным."],
+  ["melan","Мне нужно время наедине, чтобы восстановиться."],
+  ["chol","Быстро загораюсь идеей и тащу за собой других."],
+  ["sang","Мне легко адаптироваться к переменам."],
+  ["phleg","Не спешу, делаю всё основательно."],
+  ["melan","Часто сомневаюсь в себе."],
+  ["chol","Могу быть напористым и доминирующим."],
+  ["sang","Люблю движение, активность, новые впечатления."],
+  ["phleg","Меня редко что-то выбивает из колеи."],
+  ["melan","Глубоко и долго переживаю эмоции."]
+];
+const B2=[
+  ["E+","Мне нравится, когда вокруг много людей и событий."],
+  ["N+","Часто без явной причины меняется настроение."],
+  ["E+","Я легко знакомлюсь и завожу разговор."],
+  ["N+","Я нередко чувствую беспокойство или тревогу."],
+  ["E-","Предпочитаю тихий вечер наедине шумной вечеринке."],
+  ["N+","Меня легко задеть или обидеть."],
+  ["E+","Я действую быстро, не долго раздумывая."],
+  ["N+","Иногда чувствую себя подавленным без причины."],
+  ["E-","В компании чаще слушаю, чем говорю."],
+  ["N+","Я склонен переживать из-за возможных проблем."],
+  ["E+","Люблю быть в гуще событий и веселья."],
+  ["N+","После стресса мне трудно быстро успокоиться."],
+  ["E-","Мне комфортнее в узком кругу близких, чем в толпе."],
+  ["N+","Я бываю раздражительным по мелочам."],
+  ["E+","Легко берусь за авантюры и новые впечатления."],
+  ["N+","Мои чувства легко ранить."],
+  ["E-","Я обдумываю всё заранее, прежде чем действовать."],
+  ["N+","Иногда меня охватывают внутреннее напряжение и нервозность."]
+];
+const B3=[
+  ["SE","Я долго сохраняю работоспособность при высокой нагрузке."],
+  ["SI","Могу сдержать эмоции и не показать их, когда нужно."],
+  ["MO","Легко переключаюсь с одного дела на другое."],
+  ["SE","Меня трудно утомить интенсивной деятельностью."],
+  ["SI","Умею терпеливо ждать и откладывать реакцию."],
+  ["MO","Быстро адаптируюсь к новой обстановке."],
+  ["SE","Выдерживаю стресс и давление без срыва."],
+  ["SI","Могу заставить себя не реагировать на раздражитель."],
+  ["MO","Быстро засыпаю и быстро просыпаюсь, легко вхожу в ритм."],
+  ["SE","Способен долго концентрироваться на трудной задаче."],
+  ["SI","Легко останавливаю уже начатое действие, если надо."],
+  ["MO","Легко меняю привычки и подстраиваюсь под новое."]
+];
+
+const BLOCKS=[
+  {title:"Блок 1. Поведенческий профиль (40)",desc:"Оцените, насколько утверждение про вас.",data:B1},
+  {title:"Блок 2. Шкалы Айзенка: экстраверсия и нейротизм (18)",desc:"Построен по структуре методики Айзенка. Формулировки авторские.",data:B2},
+  {title:"Блок 3. Свойства нервной системы по Стреляу (12)",desc:"Сила возбуждения, сила торможения, подвижность. Формулировки авторские.",data:B3}
+];
+
+let total=0;const meta=[];
+const quiz=document.getElementById('quiz');
+BLOCKS.forEach(b=>{
+  const bt=document.createElement('div');bt.className='block-title';bt.textContent=b.title;quiz.appendChild(bt);
+  const bd=document.createElement('div');bd.className='block-desc';bd.textContent=b.desc;quiz.appendChild(bd);
+  b.data.forEach(q=>{
+    const idx=meta.length;meta.push(q[0]);
+    const el=document.createElement('div');el.className='q';
+    el.innerHTML=`<div class="qtext"><span class="qnum">${idx+1}.</span>${q[1]}</div>
+      <div class="opts">${SCALE.map((s,v)=>`<div class="opt" data-q="${idx}" data-v="${v}">${s}</div>`).join('')}</div>`;
+    quiz.appendChild(el);total++;
+  });
+});
+const answers=new Array(total).fill(null);
+document.getElementById('pcount').textContent='0 из '+total;
+
+quiz.addEventListener('click',e=>{
+  const o=e.target.closest('.opt');if(!o)return;
+  const qi=+o.dataset.q,v=+o.dataset.v;answers[qi]=v;
+  o.parentNode.querySelectorAll('.opt').forEach(x=>x.classList.remove('sel'));
+  o.classList.add('sel');upd();
+});
+function upd(){
+  const done=answers.filter(a=>a!==null).length;
+  document.getElementById('fill').style.width=(done/total*100)+'%';
+  document.getElementById('pcount').textContent=done+' из '+total;
+  document.getElementById('calc').disabled=done<total;
+  document.getElementById('warn').style.display=(done<total&&done>0)?'block':'none';
+}
+
+let lastText='';
+document.getElementById('calc').addEventListener('click',()=>{
+  const s1={chol:0,sang:0,phleg:0,melan:0},max1={chol:0,sang:0,phleg:0,melan:0};
+  meta.forEach((t,i)=>{if(s1[t]!==undefined){s1[t]+=answers[i];max1[t]+=3;}});
+  const p1={};Object.keys(s1).forEach(k=>p1[k]=s1[k]/max1[k]);
+
+  let E=0,Emax=0,N=0,Nmax=0;
+  meta.forEach((t,i)=>{
+    if(t==='E+'){E+=answers[i];Emax+=3;}
+    else if(t==='E-'){E+=(3-answers[i]);Emax+=3;}
+    else if(t==='N+'){N+=answers[i];Nmax+=3;}
+  });
+  const Ep=E/Emax,Np=N/Nmax;
+  const extra=Ep,intro=1-Ep,neuro=Np,stab=1-Np;
+  const eys={sang:extra*stab,chol:extra*neuro,phleg:intro*stab,melan:intro*neuro};
+  const eysSum=Object.values(eys).reduce((a,b)=>a+b,0)||1;
+  const eysN={};Object.keys(eys).forEach(k=>eysN[k]=eys[k]/eysSum);
+
+  const b1sum=Object.values(p1).reduce((a,b)=>a+b,0)||1;
+  const b1N={};Object.keys(p1).forEach(k=>b1N[k]=p1[k]/b1sum);
+  const comb={};Object.keys(TYPES).forEach(k=>comb[k]=(b1N[k]+eysN[k])/2);
+  const cSum=Object.values(comb).reduce((a,b)=>a+b,0)||1;
+  let pct={};Object.keys(comb).forEach(k=>pct[k]=Math.round(comb[k]/cSum*100));
+  const order=Object.keys(pct).sort((a,b)=>pct[b]-pct[a]);
+  const diff=100-order.reduce((a,k)=>a+pct[k],0);pct[order[0]]+=diff;
+
+  let se=0,seM=0,si=0,siM=0,mo=0,moM=0;
+  meta.forEach((t,i)=>{
+    if(t==='SE'){se+=answers[i];seM+=3;}
+    if(t==='SI'){si+=answers[i];siM+=3;}
+    if(t==='MO'){mo+=answers[i];moM+=3;}
+  });
+  const seP=Math.round(se/seM*100),siP=Math.round(si/siM*100),moP=Math.round(mo/moM*100);
+
+  const dom=order[0],sec=order[1];
+  const EpP=Math.round(Ep*100),NpP=Math.round(Np*100);
+  const eLabel=Ep>=0.5?'экстраверт':'интроверт';
+  const nLabel=Np>=0.5?'эмоц. нестабильный':'эмоц. стабильный';
+
+  const bars=(obj,ord)=>ord.map(k=>`
+    <div class="row"><div class="rlabel"><span>${TYPES[k].name}</span><span>${obj[k]}%</span></div>
+    <div class="rbar"><div class="rfill" data-w="${obj[k]}" style="background:${TYPES[k].color}"></div></div></div>`).join('');
+  const nsRow=(name,val,col)=>`<div class="row"><div class="rlabel"><span>${name}</span><span>${val}%</span></div>
+    <div class="rbar"><div class="rfill" data-w="${val}" style="background:${col}"></div></div></div>`;
+
+  const dotX=EpP,dotY=100-NpP;
+
+  document.getElementById('result').innerHTML=`
+    <h2>Результат: ${TYPES[dom].name.toLowerCase()} (${pct[dom]}%)</h2>
+    <p class="dom">С примесью: ${TYPES[sec].name.toLowerCase()} (${pct[sec]}%) · по Айзенку: ${eLabel}, ${nLabel}</p>
+
+    <div class="sect">Итоговый профиль (поведение + Айзенк)</div>
+    ${bars(pct,order)}
+    <p class="desc">${DESC[dom]}</p>
+
+    <div class="sect">Айзенк: координаты Э×Н</div>
+    <div class="grid">
+      <div class="axis ax-h"></div><div class="axis ax-v"></div>
+      <div class="lab l-top">Нейротизм ↑</div><div class="lab l-bot">Стабильность ↓</div>
+      <div class="lab l-left">Интро</div><div class="lab l-right">Экстра</div>
+      <div class="quad q1">Меланхолик</div><div class="quad q2">Холерик</div>
+      <div class="quad q3">Флегматик</div><div class="quad q4">Сангвиник</div>
+      <div class="dot" style="left:${dotX}%;top:${dotY}%"></div>
+    </div>
+    <p class="coord">Экстраверсия: ${EpP}% · Нейротизм: ${NpP}%</p>
+
+    <div class="sect">Стреляу: свойства нервной системы</div>
+    ${nsRow('Сила возбуждения',seP,'var(--chol)')}
+    ${nsRow('Сила торможения',siP,'var(--phleg)')}
+    ${nsRow('Подвижность НС',moP,'var(--sang)')}
+    <p class="desc">${strelauDesc(seP,siP,moP)}</p>
+
+    <button class="btn ghost" id="copyBtn">Скопировать результат</button>
+    <p class="copied" id="copied">Скопировано в буфер обмена</p>
+    <button class="btn ghost" id="restart">Пройти заново</button>
+
+    <p class="disclaim">Формулировки блоков Айзенка и Стреляу — авторские, построены по структуре оригинальных методик, а не их точный текст. Результат отражает самооценочный профиль, а не клинический диагноз.</p>
+  `;
+  document.getElementById('result').style.display='block';
+  document.getElementById('result').scrollIntoView({behavior:'smooth'});
+  setTimeout(()=>{document.querySelectorAll('.rfill').forEach(f=>f.style.width=f.dataset.w+'%');},60);
+
+  lastText=`Тест на темперамент — результат
+Тип: ${TYPES[dom].name} ${pct[dom]}% (примесь: ${TYPES[sec].name} ${pct[sec]}%)
+Профиль: Холерик ${pct.chol}% · Сангвиник ${pct.sang}% · Флегматик ${pct.phleg}% · Меланхолик ${pct.melan}%
+Айзенк: экстраверсия ${EpP}%, нейротизм ${NpP}% (${eLabel}, ${nLabel})
+Стреляу: сила возбуждения ${seP}%, сила торможения ${siP}%, подвижность ${moP}%`;
+
+  document.getElementById('copyBtn').addEventListener('click',()=>{
+    navigator.clipboard.writeText(lastText).then(()=>{
+      const c=document.getElementById('copied');c.style.display='block';
+      setTimeout(()=>c.style.display='none',2000);
+    }).catch(()=>{
+      const ta=document.createElement('textarea');ta.value=lastText;document.body.appendChild(ta);
+      ta.select();try{document.execCommand('copy');}catch(e){}document.body.removeChild(ta);
+      const c=document.getElementById('copied');c.style.display='block';setTimeout(()=>c.style.display='none',2000);
+    });
+  });
+  document.getElementById('restart').addEventListener('click',()=>{
+    answers.fill(null);
+    document.querySelectorAll('.opt').forEach(o=>o.classList.remove('sel'));
+    document.getElementById('result').style.display='none';
+    document.getElementById('result').innerHTML='';
+    upd();window.scrollTo({top:0,behavior:'smooth'});
+  });
+});
+
+function strelauDesc(se,si,mo){
+  const s=se>=60?'сильная':se>=40?'средняя':'слабая';
+  const i=si>=60?'высокий':si>=40?'средний':'низкий';
+  const m=mo>=60?'высокая (лабильность)':mo>=40?'средняя':'низкая (инертность)';
+  return `Сила возбуждения — ${s}: выносливость НС к нагрузке и стрессу. Сила торможения — ${i} контроль реакций и самоконтроль. Подвижность — ${m}: скорость переключения нервных процессов.`;
+}
+</script>
+</body>
+</html>
